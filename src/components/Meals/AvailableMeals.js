@@ -12,6 +12,13 @@ const AvailableMeals = props => {
       price={meal.price}
     />
   ));
+  if (props.isLoading)
+    return (
+      <section className={classes['meals-are-loading']}>
+        <p>Loading...</p>
+      </section>
+    );
+
   return (
     <section className={classes.meals}>
       <Card>
