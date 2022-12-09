@@ -1,3 +1,4 @@
+import React from 'react';
 import { useContext, useState } from 'react';
 import useHttp from '../../hooks/use-http';
 import CartContext from '../../store/cart-context';
@@ -9,7 +10,10 @@ import Checkout from './Checkout';
 const Cart = props => {
   const [isCheckout, setIsCheckout] = useState(false);
   const cartCtx = useContext(CartContext);
-  const { sendRequest: submitOrders } = useHttp(() => {});
+  const { isLoading: isSubmitting, sendRequest: submitOrders } = useHttp(
+    () => {}
+  );
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
   const hasItems = cartCtx.items.length > 0;
@@ -33,7 +37,10 @@ const Cart = props => {
         method: 'POST',
         body: JSON.stringify({ user: userData, orderedItems: cartCtx.items }),
       }
-    );
+    ).then(() => {
+      setDidSubmit(true);
+      cartCtx.clearCart();
+    });
   };
 
   const cartItems = (
@@ -64,8 +71,9 @@ const Cart = props => {
       )}
     </div>
   );
-  return (
-    <Modal onClose={props.onClose}>
+
+  const cartModalContent = (
+    <React.Fragment>
       {cartItems}
       <div className={classes.total}>
         <span>Total Amount</span>
@@ -75,6 +83,29 @@ const Cart = props => {
         <Checkout onSubmit={submitOrderHandler} onCancel={props.onClose} />
       )}
       {!isCheckout && modalActions}
+    </React.Fragment>
+  );
+
+  const didSubmitModalContent = (
+    <div className={classes.actions}>
+      <p>Successfully sent the order !</p>
+      <button className={classes.button} onClick={props.onClose}>
+        Close
+      </button>
+    </div>
+  );
+
+  const isSubmittingModalContent = (
+    <div className={classes.actions}>
+      <p>Sending order data...</p>
+    </div>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {isSubmitting && isSubmittingModalContent}
+      {didSubmit && didSubmitModalContent}
     </Modal>
   );
 };
