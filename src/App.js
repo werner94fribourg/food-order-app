@@ -12,7 +12,6 @@ function App() {
     for (const [_, values] of Object.entries(data)) {
       dataArray.push(values);
     }
-    console.log(dataArray);
     setMeals(() => dataArray.flatMap(data => data));
   };
   const {
