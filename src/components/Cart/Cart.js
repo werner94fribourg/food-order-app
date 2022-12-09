@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import useHttp from '../../hooks/use-http';
 import CartContext from '../../store/cart-context';
 import classes from './Cart.module.scss';
 import Modal from '../UI/Modal';
@@ -8,6 +9,7 @@ import Checkout from './Checkout';
 const Cart = props => {
   const [isCheckout, setIsCheckout] = useState(false);
   const cartCtx = useContext(CartContext);
+  const { sendRequest: submitOrders } = useHttp(() => {});
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
   const hasItems = cartCtx.items.length > 0;
@@ -22,6 +24,16 @@ const Cart = props => {
 
   const orderHandler = () => {
     setIsCheckout(true);
+  };
+
+  const submitOrderHandler = userData => {
+    submitOrders(
+      'https://react-http-e214c-default-rtdb.firebaseio.com/orders.json',
+      {
+        method: 'POST',
+        body: JSON.stringify({ user: userData, orderedItems: cartCtx.items }),
+      }
+    );
   };
 
   const cartItems = (
@@ -59,7 +71,9 @@ const Cart = props => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && (
+        <Checkout onSubmit={submitOrderHandler} onCancel={props.onClose} />
+      )}
       {!isCheckout && modalActions}
     </Modal>
   );
