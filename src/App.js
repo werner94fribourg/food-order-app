@@ -15,8 +15,11 @@ function App() {
     console.log(dataArray);
     setMeals(() => dataArray.flatMap(data => data));
   };
-  const { isLoading: mealsAreLoading, sendRequest: getMeals } =
-    useHttp(processMealsData);
+  const {
+    isLoading: mealsAreLoading,
+    httpError: mealsError,
+    sendRequest: getMeals,
+  } = useHttp(processMealsData);
 
   useEffect(() => {
     getMeals('https://react-http-e214c-default-rtdb.firebaseio.com/meals.json');
@@ -35,7 +38,11 @@ function App() {
       {cartIsShown && <Cart onClose={hideCartHandler} />}
       <Header onShowCart={showCartHandler} />
       <main>
-        <Meals meals={meals} isLoading={mealsAreLoading} />
+        <Meals
+          meals={meals}
+          isLoading={mealsAreLoading}
+          httpError={mealsError}
+        />
       </main>
     </CartProvider>
   );

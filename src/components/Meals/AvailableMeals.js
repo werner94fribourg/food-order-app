@@ -19,6 +19,13 @@ const AvailableMeals = props => {
       </section>
     );
 
+  if (props.httpError) {
+    return (
+      <section className={classes['meals-error']}>
+        <p>{props.httpError}</p>
+      </section>
+    );
+  }
   return (
     <section className={classes.meals}>
       <Card>

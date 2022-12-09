@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 const useHttp = processData => {
   const [isLoading, setIsLoading] = useState(true);
+  const [httpError, setHttpError] = useState();
   const sendRequest = useCallback(
     async (url, requestConfig) => {
       try {
@@ -18,13 +19,14 @@ const useHttp = processData => {
         setIsLoading(false);
       } catch (err) {
         console.error(err.message || 'Something went wrong!');
+        setHttpError(err.message || 'Something went wrong!');
         setIsLoading(false);
       }
     },
     [processData]
   );
 
-  return { isLoading, sendRequest };
+  return { isLoading, httpError, sendRequest };
 };
 
 export default useHttp;

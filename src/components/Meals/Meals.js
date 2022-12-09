@@ -6,7 +6,11 @@ const Meals = props => {
   return (
     <React.Fragment>
       <MealsSummary />
-      <AvailableMeals meals={props.meals} isLoading={props.isLoading} />
+      <AvailableMeals
+        meals={props.meals}
+        isLoading={props.isLoading}
+        httpError={props.httpError}
+      />
     </React.Fragment>
   );
 };
